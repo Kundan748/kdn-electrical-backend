@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import com.kdn.kdnelectrical.dto.LoginRequest;
 import com.kdn.kdnelectrical.dto.LoginResponse;
 import com.kdn.kdnelectrical.entity.User;
+import com.kdn.kdnelectrical.exception.InvalidCredentialsException;
 import com.kdn.kdnelectrical.repository.UserRepository;
 import com.kdn.kdnelectrical.security.JwtUtil;
 
@@ -30,14 +31,13 @@ public class AuthService {
     public LoginResponse login(LoginRequest request) {
 
         User user = userRepository.findByPhone(request.getPhone())
-                .orElseThrow(() -> new RuntimeException("Invalid phone or password"));
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid phone or password"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid phone or password");
+            throw new InvalidCredentialsException("Invalid phone or password");
         }
 
         String token = jwtUtil.generateToken(user.getPhone());
-
         return new LoginResponse(token, user.getRole().name());
     }
 }
