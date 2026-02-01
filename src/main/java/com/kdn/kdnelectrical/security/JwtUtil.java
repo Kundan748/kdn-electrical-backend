@@ -22,14 +22,23 @@ public class JwtUtil {
     // ========================
     // Generate JWT Token
     // ========================
-    public String generateToken(String subject) {
+    public String generateToken(String subject, String role) {
         return Jwts.builder()
-                .setSubject(subject) // phone number
+                .setSubject(subject) // phone
+                .claim("role", role) // ROLE_CUSTOMER / ROLE_WORKER / ROLE_ADMIN
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION_MS))
                 .signWith(key)
                 .compact();
     }
+    
+    // ========================
+    // Extract Role
+    // ========================
+    public String extractRole(String token) {
+        return getClaims(token).get("role", String.class);
+    }
+
 
     // ========================
     // Extract subject (phone)

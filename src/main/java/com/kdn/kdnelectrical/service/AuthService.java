@@ -37,7 +37,8 @@ public class AuthService {
             throw new InvalidCredentialsException("Invalid phone or password");
         }
 
-        String token = jwtUtil.generateToken(user.getPhone());
+        String role = "ROLE_" + user.getRole().name();
+        String token = jwtUtil.generateToken(user.getPhone(), role);
         return new LoginResponse(token, user.getRole().name());
     }
 }
