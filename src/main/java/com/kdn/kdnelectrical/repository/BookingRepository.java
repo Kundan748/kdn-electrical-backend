@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.kdn.kdnelectrical.entity.Booking;
 
-public interface BookingRepository extends JpaRepository<Booking, Long> {
+public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
     List<Booking> findByCustomerId(Long customerId);
 
