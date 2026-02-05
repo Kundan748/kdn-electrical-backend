@@ -17,16 +17,21 @@ public class AdminBillingService {
     private final BillingMaterialRepository billingRepo;
     private final MaterialRepository materialRepo;
     private final WarrantyRepository warrantyRepo;
+    private final InvoicePdfService pdfService;
 
     public AdminBillingService(InvoiceRepository invoiceRepo,
-                               BillingMaterialRepository billingRepo,
-                               MaterialRepository materialRepo,
-                               WarrantyRepository warrantyRepo) {
-        this.invoiceRepo = invoiceRepo;
-        this.billingRepo = billingRepo;
-        this.materialRepo = materialRepo;
-        this.warrantyRepo = warrantyRepo;
-    }
+            BillingMaterialRepository billingRepo,
+            MaterialRepository materialRepo,
+            WarrantyRepository warrantyRepo,
+            InvoicePdfService pdfService) {
+
+this.invoiceRepo = invoiceRepo;
+this.billingRepo = billingRepo;
+this.materialRepo = materialRepo;
+this.warrantyRepo = warrantyRepo;
+this.pdfService = pdfService;
+}
+
 
     @Transactional
     public Invoice createInvoice(Integer bookingId,
@@ -64,6 +69,7 @@ public class AdminBillingService {
 
         invoiceRepo.save(invoice);
 
+
         // 3️⃣ Create warranty automatically
         Warranty warranty = new Warranty();
         warranty.setInvoiceId(invoice.getId());
@@ -74,6 +80,12 @@ public class AdminBillingService {
         );
 
         warrantyRepo.save(warranty);
+        
+     // ✅ Generate PDF
+        String pdfUrl = pdfService.generatePdf(invoice);
+        invoice.setInvoicePdfUrl(pdfUrl);
+
+        invoiceRepo.save(invoice);
 
         return invoice;
     }
